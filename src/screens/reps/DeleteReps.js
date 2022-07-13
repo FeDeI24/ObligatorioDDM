@@ -14,21 +14,21 @@ import MyText from "../../components/MyText";
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
-const DeleteUser = ({ navigation }) => {
+const DeleteRep = ({ navigation }) => {
   const [id, setId] = useState('');
 
-  const deleteUser = ({ navigation }) => {
-    console.log("deleteUser");
+  const deleteRep = ({ navigation }) => {
+    console.log("deleteRep");
     db.transaction((tx) => {
       tx.executeSql(
-        `DELETE FROM users WHERE user_id = ?`,
+        `DELETE FROM Reps WHERE rep_id = ?`,
         [id],
         (tx, results) => {
           console.log("results", results);
           if (results.rowsAffected > 0) {
-            Alert.alert("Usuario eliminado");
+            Alert.alert("Repuesto eliminado");
           } else {
-            Alert.alert("El usuario no existe");
+            Alert.alert("El repuesto no existe");
           }
         }
       );
@@ -39,14 +39,14 @@ const DeleteUser = ({ navigation }) => {
       <View style={styles.viewContainer}>
         <View style={styles.generalView}>
           <ScrollView>
-            <MyText text="Busqueda de usuario" style={styles.text} />
+          <MyText text="Busqueda de repuestos" style={styles.text}/>
             <KeyboardAvoidingView style={styles.keyboardView}>
-              <MyInputText
-                placeholder="ID de usuario"
-                onChangeText={(text) => setId(text)}
-              />
-              <MySingleButton title="Borrar Usuario" customPress={deleteUser} />
-            </KeyboardAvoidingView>
+          <MyInputText
+            placeholder="Id de repuesto"
+            onChangeText={(text) => setId(text)}
+          />
+          <MySingleButton title="Borrar Repuesto" customPress={deleteRep} />
+          </KeyboardAvoidingView>
           </ScrollView>
         </View>
       </View>
@@ -54,7 +54,7 @@ const DeleteUser = ({ navigation }) => {
   );
 };
 
-export default DeleteUser;
+export default DeleteRep;
 
 const styles = StyleSheet.create({
   container: {

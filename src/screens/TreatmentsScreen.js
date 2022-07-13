@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, SafeAreaView, ScrollView, Alert } from "react-native";
 import MyButton from "../components/MyButton";
 
@@ -8,16 +8,16 @@ const db = DatabaseConnection.getConnection();
 const TreatmentsScreen = ({ navigation }) => {
 
   useEffect(() => {
-    db.transaction( (txn) => {
+    db.transaction((txn) => {
       txn.executeSql(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='treatments'",
         [],
-         (tx, res) =>{
+        (tx, res) => {
           console.log('item:', res.rows.length);
           if (res.rows.length == 0) {
             txn.executeSql('DROP TABLE IF EXISTS treatments', []);
             txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS treatments(treatment_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre VARCHAR(20), matricula VARCHAR(20), fchInicio VARCHAR(20), fchFin VARCHAR(20), costo VARCHAR(20), FOREIGN KEY(matricula) REFERENCES vehicles(matricula))',
+              'CREATE TABLE IF NOT EXISTS treatments(treatment_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre VARCHAR(20), matricula VARCHAR(20), fchInicio VARCHAR(10), fchFin VARCHAR(10), costo VARCHAR(20), insumo VARCHAR(20) UNIQUE, repuesto VARCHAR(20) UNIQUE, utReps VARHCAR(2))',
               []
             );
           }
@@ -27,7 +27,7 @@ const TreatmentsScreen = ({ navigation }) => {
   }, []);
 
   const removeElementsOnDatabase = () => {
-    db.transaction( (txn) => {
+    db.transaction((txn) => {
       txn.executeSql('DELETE FROM treatments', []);
     });
   }
@@ -66,10 +66,17 @@ const TreatmentsScreen = ({ navigation }) => {
               />
 
               <MyButton
-                title="Ver todos los Usuarios"
+                title="Ver todos los Tratamientos"
                 btnColor="black"
                 btnIcon="user-times"
                 customPress={() => navigation.navigate("ViewAllTreatments")}
+              />
+
+              <MyButton
+                title="Ver datos asociados a Tratamientos"
+                btnColor="black"
+                btnIcon="user-times"
+                customPress={() => navigation.navigate("ViewAllTreatmentsData")}
               />
               <MyButton
                 title="Borrar DB"

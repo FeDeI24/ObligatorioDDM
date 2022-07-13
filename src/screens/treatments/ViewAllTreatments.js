@@ -37,6 +37,9 @@ const ViewAllTreatments = ({navigation}) => {
   const listItemView = (item) => {
     return (
       <View key={item.id} style={styles.listItemView}>
+        <MyText text="ID de Tratamiento" style={styles.text}/>
+        <MyText text={item.treatment_id} style={styles.text}/>
+
         <MyText text="Nombre de Tratamiento" style={styles.text}/>
         <MyText text={item.nombre} style={styles.text}/>
 
@@ -51,6 +54,12 @@ const ViewAllTreatments = ({navigation}) => {
 
         <MyText text="Costo del tratamiento" style={styles.text}/>
         <MyText text={item.costo} style={styles.text}/>
+
+        <MyText text="Insumo del tratamiento" style={styles.text}/>
+        <MyText text={item.insumo} style={styles.text}/>
+
+        <MyText text="Repuesto del tratamiento" style={styles.text}/>
+        <MyText text={item.repuesto} style={styles.text}/>
       </View>
     );
   };

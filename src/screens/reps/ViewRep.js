@@ -14,13 +14,13 @@ import MySingleButton from "../../components/MySingleButton";
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
-const ViewUser = ({ navigation }) => {
+const ViewRep = ({ navigation }) => {
   const [id, setId] = useState('');
-  const [userData, setUserData] = useState(null);
+  const [repData, setRepData] = useState(null);
 
-  const getUserData = () => {
-    console.log("getUserData");
-    setUserData({});
+  const getRepData = () => {
+    console.log("getRepData");
+    setRepData({});
 
     if (!id.trim()) {
       Alert.alert("El ID es requerido");
@@ -29,14 +29,14 @@ const ViewUser = ({ navigation }) => {
 
     db.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM users WHERE user_id = ?`,
+        `SELECT * FROM reps WHERE rep_id = ?`,
         [id],
         (tx, results) => {
           console.log("results", results);
           if (results.rows.length > 0) {
-            setUserData(results.rows.item(0));
+            setRepData(results.rows.item(0));
           } else {
-            Alert.alert("El usuario no existe");
+            Alert.alert("El repuesto no existe");
           }
         }
       );
@@ -49,21 +49,18 @@ const ViewUser = ({ navigation }) => {
         <View style={styles.generalView}>
           <ScrollView>
             <KeyboardAvoidingView style={styles.keyboardView}>
-              <MyText text="Filtro de usuario" style={styles.text}/>
+              <MyText text="Filtro de Repuesto" style={styles.text}/>
               <MyInputText
                 style={styles.inputStyle}
-                placeholder="ID de usuario"
+                placeholder="ID del Repuesto"
                 onChangeText={(text) => setId(text)}
               />
-              <MySingleButton title="Buscar" customPress={getUserData} />
+              <MySingleButton title="Buscar" customPress={getRepData} />
               <View style={styles.presenterView}>
-                <MyText text={`Nombre: ${!userData ? '' : userData.nombre}`} style={styles.presenterText}/>
+                <MyText text={`Nombre: ${!repData ? '' : repData.nombre}`} style={styles.presenterText}/>
               </View>
               <View style={styles.presenterView}>
-                <MyText text={`Apellido: ${!userData ? '' : userData.apellido}`} style={styles.presenterText}/>
-              </View>
-              <View style={styles.presenterView}>
-                <MyText text={`Matricula: ${!userData ? '' : userData.matricula}`} style={styles.presenterText}/>
+                <MyText text={`Cantidad: ${!repData ? '' : repData.cantidad}`} style={styles.presenterText}/>
               </View>
             </KeyboardAvoidingView>
           </ScrollView>
@@ -73,7 +70,7 @@ const ViewUser = ({ navigation }) => {
   );
 };
 
-export default ViewUser;
+export default ViewRep;
 
 const styles = StyleSheet.create({
   container: {

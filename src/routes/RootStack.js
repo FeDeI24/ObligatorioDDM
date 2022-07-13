@@ -7,6 +7,8 @@ import HomeScreen from "../screens/HomeScreen";
 import UsersScreen from "../screens/UsersScreen";
 import VehiclesScreen from "../screens/VehiclesScreen";
 import TreatmentsScreen from "../screens/TreatmentsScreen";
+import SuppliesScreen from "../screens/SuppliesScreen";
+import RepsScreen from "../screens/RepsScreen";
 
 import RegisterUser from "../screens/users/RegisterUsers";
 import UpdateUser from "../screens/users/UpdateUsers";
@@ -23,8 +25,22 @@ import DeleteVehicle from "../screens/vehicle/DeleteVehicles";
 import RegisterTreatment from "../screens/treatments/RegisterTreatments";
 import UpdateTreatment from "../screens/treatments/UpdateTreatments";
 import ViewAllTreatments from "../screens/treatments/ViewAllTreatments";
+import ViewAllTreatmentsData from "../screens/treatments/ViewAllTreatmentsData";
 import ViewTreatment from "../screens/treatments/ViewTreatment";
 import DeleteTreatment from "../screens/treatments/DeleteTreatments";
+
+import RegisterSupply from "../screens/supplies/RegisterSupplies";
+import UpdateSupply from "../screens/supplies/UpdateSupplies";
+import ViewAllSupplies from "../screens/supplies/ViewAllSupplies";
+import ViewSupply from "../screens/supplies/ViewSupply";
+import DeleteSupply from "../screens/supplies/DeleteSupplies";
+
+import RegisterRep from "../screens/reps/RegisterReps";
+import UpdateRep from "../screens/reps/UpdateReps";
+import ViewAllReps from "../screens/reps/ViewAllReps";
+import ViewRep from "../screens/reps/ViewRep";
+import DeleteRep from "../screens/reps/DeleteReps";
+
 
 const Routes = () => {
     return (
@@ -89,6 +105,37 @@ const Routes = () => {
                         },
                     }}
                 />
+
+                <Stack.Screen
+                    name="Supplies"
+                    component={SuppliesScreen}
+                    options={{
+                        title: "Insumos",
+                        headerStyle: {
+                            backgroundColor: "#000000",
+                        },
+                        headerTintColor: "#b2b2b2",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="Reps"
+                    component={RepsScreen}
+                    options={{
+                        title: "Repuestos",
+                        headerStyle: {
+                            backgroundColor: "#000000",
+                        },
+                        headerTintColor: "#b2b2b2",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
 
                 <Stack.Screen
                     name="RegisterUsers"
@@ -199,7 +246,7 @@ const Routes = () => {
                     name="ViewAllVehicles"
                     component={ViewAllVehicles}
                     options={{
-                        title: "Ver todos los Usuarios",
+                        title: "Ver todos los Vehiculos",
                         headerStyle: {
                             backgroundColor: "#a2a29f",
                         },
@@ -286,6 +333,21 @@ const Routes = () => {
                 />
 
                 <Stack.Screen
+                    name="ViewAllTreatmentsData"
+                    component={ViewAllTreatmentsData}
+                    options={{
+                        title: "Ver datos asociados a Tratamientos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
                     name="ViewTreatment"
                     component={ViewTreatment}
                     options={{
@@ -299,12 +361,162 @@ const Routes = () => {
                         },
                     }}
                 />
-                
+
                 <Stack.Screen
                     name="DeleteTreatments"
                     component={DeleteTreatment}
                     options={{
                         title: "Borrar Tratamientos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="RegisterSupplies"
+                    component={RegisterSupply}
+                    options={{
+                        title: "Registrar Insumos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="UpdateSupplies"
+                    component={UpdateSupply}
+                    options={{
+                        title: "Modificar Insumos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="ViewAllSupplies"
+                    component={ViewAllSupplies}
+                    options={{
+                        title: "Ver todos los Insumos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="ViewSupply"
+                    component={ViewSupply}
+                    options={{
+                        title: "Ver Insumo",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="DeleteSupplies"
+                    component={DeleteSupply}
+                    options={{
+                        title: "Borrar Insumos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="RegisterReps"
+                    component={RegisterRep}
+                    options={{
+                        title: "Registrar Repuestos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="UpdateReps"
+                    component={UpdateRep}
+                    options={{
+                        title: "Modificar Repuestos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="ViewAllReps"
+                    component={ViewAllReps}
+                    options={{
+                        title: "Ver todos los Repuestos",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="ViewRep"
+                    component={ViewRep}
+                    options={{
+                        title: "Ver Repuesto",
+                        headerStyle: {
+                            backgroundColor: "#a2a29f",
+                        },
+                        headerTintColor: "#000000",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+
+                <Stack.Screen
+                    name="DeleteReps"
+                    component={DeleteRep}
+                    options={{
+                        title: "Borrar Repuestos",
                         headerStyle: {
                             backgroundColor: "#a2a29f",
                         },

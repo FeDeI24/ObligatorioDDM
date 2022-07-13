@@ -5,26 +5,26 @@ import MyText from "../../components/MyText";
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
-const ViewAllVehicles = ({navigation}) => {
-  const [vehicles, setVehicles] = useState([]);
+const ViewAllSupplies = ({navigation}) => {
+  const [supplies, setSupplies] = useState([]);
 
   useEffect(() => {
     db.transaction((tx) => {
-      tx.executeSql(`SELECT * FROM vehicles`, [], (tx, results) => {
+      tx.executeSql(`SELECT * FROM supplies`, [], (tx, results) => {
         console.log("results", results);
         if (results.rows.length > 0) {
           var temp = [];
           for (let i = 0; i < results.rows.length; ++i)
             temp.push(results.rows.item(i));
-            setVehicles(temp);
+          setSupplies(temp);
         } else {
           Alert.alert(
             "Mensaje",
-            "No hay Vehículos",
+            "No hay insumos!!!",
             [
               {
                 text: "Ok",
-                onPress: () => navigation.navigate("Vehicles"),
+                onPress: () => navigation.navigate("Supplies"),
               },
             ],
             { cancelable: false }
@@ -37,20 +37,14 @@ const ViewAllVehicles = ({navigation}) => {
   const listItemView = (item) => {
     return (
       <View key={item.id} style={styles.listItemView}>
-        <MyText text="ID del vehiculo" style={styles.text}/>
-        <MyText text={item.vehicle_id} style={styles.text}/>
+        <MyText text="Id del insumo" style={styles.text}/>
+        <MyText text={item.supply_id} style={styles.text}/>
 
-        <MyText text="Matricula del vehiculo" style={styles.text}/>
-        <MyText text={item.matricula} style={styles.text}/>
+        <MyText text="Nombre del insumo" style={styles.text}/>
+        <MyText text={item.nombre} style={styles.text}/>
 
-        <MyText text="Marca del vehiculo" style={styles.text}/>
-        <MyText text={item.marca} style={styles.text}/>
-
-        <MyText text="Color del vehiculo" style={styles.text}/>
-        <MyText text={item.color} style={styles.text}/>
-
-        <MyText text="Serie de Motor del vehiculo" style={styles.text}/>
-        <MyText text={item.serialMotor} style={styles.text}/>
+        <MyText text="Cantidad de insumo" style={styles.text}/>
+        <MyText text={item.cantidad} style={styles.text}/>
       </View>
     );
   };
@@ -61,7 +55,7 @@ const ViewAllVehicles = ({navigation}) => {
         <View>
           <FlatList
             contentContainerStyle={{ paddingHorizontal: 20 }}
-            data={vehicles}
+            data={supplies}
             keyExtractor={(index) => index.toString()}
             renderItem={({ item }) => listItemView(item)}
           />
@@ -71,7 +65,7 @@ const ViewAllVehicles = ({navigation}) => {
   );
 };
 
-export default ViewAllVehicles;
+export default ViewAllSupplies;
 
 const styles = StyleSheet.create({
   container: {

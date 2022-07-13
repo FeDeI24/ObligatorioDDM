@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -15,24 +15,44 @@ import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
 const UpdateVehicle = () => {
-  const [matriculaSearch, setMatriculaSearch] = useState('');
+  const [idSearch, setIdSearch] = useState('');
   const [matricula, setMatricula] = useState('');
   const [marca, setMarca] = useState('');
   const [color, setColor] = useState('');
   const [serialMotor, setSerialMotor] = useState('');
+  const [vehicles, setVehicles] = useState([]);
+
+  useEffect(() => {
+    console.log("##### Buscar vehiculos #####");
+    getVehicles();
+  }, []);
+
+  const getVehicles = () => {
+    db.transaction((tx) => {
+      tx.executeSql(`SELECT matricula FROM vehicles`, [], (tx, results) => {
+        console.log("results", results);
+        if (results.rows.length > 0) {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setVehicles(temp);
+        }
+      });
+    });
+  };
 
   const searchVehicle = () => {
     console.log("searchVehicle");
 
-    if (!matriculaSearch.trim()) {
-      Alert.alert("La matrícula es requerida");
+    if (!idSearch.trim()) {
+      Alert.alert("El ID es requerido");
       return;
     }
 
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM vehicles WHERE matricula = ?",
-        [matriculaSearch],
+        "SELECT * FROM vehicles WHERE vehicle_id = ?",
+        [idSearch],
         (tx, results) => {
           if (results.rows.length > 0) {
             setMatricula(results.rows.item(0).matricula);
@@ -54,35 +74,55 @@ const UpdateVehicle = () => {
       Alert.alert("La matricula del vehiculo no puede estar vacia");
       return;
     }
-
+    if (matricula.length > 7) {
+      Alert.alert("La matricula solo puede tener 7 caracteres");
+      return;
+    }
     if (!marca.trim()) {
       Alert.alert("El marca del vehiculo no puede estar vacia");
       return;
     }
-
+    if (marca.length > 20) {
+      Alert.alert("La marca solo puede tener 20 caracteres");
+      return;
+    }
     if (!color.trim()) {
       Alert.alert("El color del vehiculo no puede estar vacio");
       return;
     }
-
+    if (color.length > 20) {
+      Alert.alert("El color solo puede tener 20 caracteres");
+      return;
+    }
     if (!serialMotor.trim()) {
       Alert.alert("La serie del motor no puede estar vacia");
       return;
     }
+    if (serialMotor.length > 20) {
+      Alert.alert("El serial del motor solo puede tener 20 caracteres");
+      return;
+    }
 
+    for (let i in vehicles) {
+      if (vehicles[i].matricula == matricula) {
+        Alert.alert("La matricula ya esta asociada a un vehiculo");
+        return true;
+      }
+    }
     db.transaction((tx) => {
       tx.executeSql(
-        "UPDATE vehicles SET matricula = ?, marca = ?, color = ?, serialMotor = ? WHERE matricula = ?",
-        [matricula, marca, color, serialMotor, matricula],
+        "UPDATE vehicles SET matricula = ?, marca = ?, color = ?, serialMotor = ? WHERE vehicle_id = ?",
+        [matricula, marca, color, serialMotor, idSearch],
         (tx, results) => {
-          if (results.rows.length > 0) {
-            Alert.alert("Vehículo actualizado");
+          if (results.rowsAffected > 0) {
+            Alert.alert("Vehiculo actualizado");
           } else {
-            Alert.alert("No se pudo actualizar el vehículo");
+            Alert.alert("No se pudo actualizar el vehiculo");
           }
         }
       );
     });
+    return false;
   };
 
   return (
@@ -96,9 +136,9 @@ const UpdateVehicle = () => {
             >
               <MyText text="Buscar Vehículo" style={styles.text} />
               <MyInputText
-                placeholder="Ingrese la matrícula del Vehiculo"
+                placeholder="Ingrese el ID del Vehiculo"
                 style={styles.inputStyle}
-                onChangeText={(text) => setMatriculaSearch(text)}
+                onChangeText={(text) => setIdSearch(text)}
               />
               <MySingleButton title="Buscar" customPress={searchVehicle} />
 

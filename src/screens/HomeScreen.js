@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView, Alert } from "react-native";
+import React from "react";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import MyButton from "../components/MyButton";
 
 const HomeScreen = ({ navigation }) => {
@@ -10,17 +10,33 @@ const HomeScreen = ({ navigation }) => {
                     <View style={styles.generalView}>
                         <ScrollView>
                             <MyButton
-                                title="Usuarios"
-                                btnColor="green"
-                                btnIcon="user-plus"
-                                customPress={() => navigation.navigate("Users")}
-                            />
-                            <MyButton
                                 title="Vehiculos"
                                 btnColor="red"
                                 btnIcon="user-circle"
                                 customPress={() => navigation.navigate("Vehicles")}
                             />
+
+                            <MyButton
+                                title="Insumos"
+                                btnColor="purple"
+                                btnIcon="users"
+                                customPress={() => navigation.navigate("Supplies")}
+                            />
+
+                            <MyButton
+                                title="Repuestos"
+                                btnColor="orange"
+                                btnIcon="users"
+                                customPress={() => navigation.navigate("Reps")}
+                            />
+
+                            <MyButton
+                                title="Usuarios"
+                                btnColor="green"
+                                btnIcon="user-plus"
+                                customPress={() => navigation.navigate("Users")}
+                            />
+
                             <MyButton
                                 title="Tratamientos"
                                 btnColor="blue"

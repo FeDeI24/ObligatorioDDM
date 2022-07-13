@@ -10,39 +10,27 @@ import {
 import MyText from "../../components/MyText";
 import MyInputText from "../../components/MyInputText";
 import MySingleButton from "../../components/MySingleButton";
-import MyDropDownPicker from "../../components/MyDropDownPicker";
-const DropDownPicker = MyDropDownPicker;
 
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
 const ViewTreatment = ({ navigation }) => {
-    const [matricula, setMatricula] = useState("");
-    const [fchInicio, setFchInicio] = useState("");
-    const [fchFin, setFchFin] = useState("");
+    const [id, setId] = useState('');
     const [treatmentData, setTreatmentData] = useState(null);
 
     const getTreatmentData = () => {
         console.log("getTreatmentData");
         setTreatmentData({});
 
-        if (!matricula.trim()) {
-            Alert.alert("La matricula del vehiculo es requerida");
-            return;
-        }
-        if (!fchInicio.trim()) {
-            Alert.alert("La fecha de inicio es requerida");
-            return;
-        }
-        if (!fchFin.trim()) {
-            Alert.alert("La fecha de fin es requerida");
+        if (!id.trim()) {
+            Alert.alert("El ID es requerido");
             return;
         }
 
         db.transaction((tx) => {
             tx.executeSql(
-                `SELECT * FROM treatments WHERE matricula = ?, fchInicio = ?, fchFin = ?`,
-                [matricula, fchInicio, fchFin],
+                `SELECT * FROM treatments WHERE treatment_id = ?`,
+                [id],
                 (tx, results) => {
                     console.log("results", results);
                     if (results.rows.length > 0) {
@@ -62,21 +50,10 @@ const ViewTreatment = ({ navigation }) => {
                     <ScrollView>
                         <KeyboardAvoidingView style={styles.keyboardView}>
                             <MyText text="Filtro de tratamientos" style={styles.text} />
-                            {/* Quisimos poner un DropDownPicker para mostrar todas las matriculas seleccionables pero no pudimos, pensamos arreglarlo para la proxima entrega */}
                             <MyInputText
                                 style={styles.inputStyle}
-                                placeholder="Matricula de vehiculo"
-                                onChangeText={(text) => setMatricula(text)}
-                            />
-                            <MyInputText
-                                style={styles.inputStyle}
-                                placeholder="Fecha inicio"
-                                onChangeText={(text) => setFchInicio(text)}
-                            />
-                            <MyInputText
-                                style={styles.inputStyle}
-                                placeholder="Fecha fin"
-                                onChangeText={(text) => setFchFin(text)}
+                                placeholder="ID del Tratamiento"
+                                onChangeText={(text) => setId(text)}
                             />
                             <MySingleButton title="Buscar" customPress={getTreatmentData} />
 
@@ -94,6 +71,12 @@ const ViewTreatment = ({ navigation }) => {
                             </View>
                             <View style={styles.presenterView}>
                                 <MyText text={`Costo: ${!treatmentData ? '' : treatmentData.costo}`} style={styles.presenterText} />
+                            </View>
+                            <View style={styles.presenterView}>
+                                <MyText text={`Insumo: ${!treatmentData ? '' : treatmentData.insumo}`} style={styles.presenterText} />
+                            </View>
+                            <View style={styles.presenterView}>
+                                <MyText text={`Repuesto: ${!treatmentData ? '' : treatmentData.repuesto}`} style={styles.presenterText} />
                             </View>
                         </KeyboardAvoidingView>
                     </ScrollView>

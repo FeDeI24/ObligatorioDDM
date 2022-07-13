@@ -10,28 +10,23 @@ import {
 import MyInputText from "../../components/MyInputText";
 import MySingleButton from "../../components/MySingleButton";
 import MyText from "../../components/MyText";
-import MyDropDownPicker from "../../components/MyDropDownPicker";
-const DropDownPicker = MyDropDownPicker;
 
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
 const DeleteTreatment = ({ navigation }) => {
-  const [matricula, setMatricula] = useState('');
-  const [fchInicio, setFchInicio] = useState('');
-  const [fchFin, setFchFin] = useState('');
+  const [id, setId] = useState('');
 
   const deleteTreatment = ({ navigation }) => {
     console.log("deleteTreatment");
     db.transaction((tx) => {
       tx.executeSql(
-        `DELETE FROM treatments WHERE matricula = ?, fchInicio = ?, fchFin = ?`,
-        [matricula, fchInicio, fchFin],
+        `DELETE FROM treatments WHERE treatment_id = ?`,
+        [id],
         (tx, results) => {
           console.log("results", results);
           if (results.rowsAffected > 0) {
             Alert.alert("Tratamiento eliminado");
-            navigation.navigate("Treatments");
           } else {
             Alert.alert("El tratamiento no existe");
           }
@@ -44,23 +39,14 @@ const DeleteTreatment = ({ navigation }) => {
       <View style={styles.viewContainer}>
         <View style={styles.generalView}>
           <ScrollView>
-          <MyText text="Busqueda de tratamiento" style={styles.text}/>
+            <MyText text="Busqueda de tratamiento" style={styles.text} />
             <KeyboardAvoidingView style={styles.keyboardView}>
-              {/* Quisimos poner un DropDownPicker para mostrar todas las matriculas seleccionables pero no pudimos, pensamos arreglarlo para la proxima entrega */}
-          <MyInputText
-            placeholder="Matricula de Vehiculo"
-            onChangeText={(text) => setMatricula(text)}
-          />
-          <MyInputText
-            placeholder="Fecha Inicio"
-            onChangeText={(text) => setFchInicio(text)}
-          />
-          <MyInputText
-            placeholder="Fecha Fin"
-            onChangeText={(text) => setFchFin(text)}
-          />
-          <MySingleButton title="Borrar Tratamiento" customPress={deleteTreatment} />
-          </KeyboardAvoidingView>
+              <MyInputText
+                placeholder="ID de tratamiento"
+                onChangeText={(text) => setId(text)}
+              />
+              <MySingleButton title="Borrar tratamiento" customPress={deleteTreatment} />
+            </KeyboardAvoidingView>
           </ScrollView>
         </View>
       </View>

@@ -17,7 +17,7 @@ const UsersScreen = ({ navigation }) => {
           if (res.rows.length == 0) {
             txn.executeSql('DROP TABLE IF EXISTS users', []);
             txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS users(user_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre VARCHAR(20), apellido VARCHAR(20), ci VARCHAR(20), matricula VARCHAR(10), FOREIGN KEY(matricula) REFERENCES vehicles(matricula))',
+              'CREATE TABLE IF NOT EXISTS users(user_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre VARCHAR(20), apellido VARCHAR(20), ci NUMERIC(8,0) UNIQUE, matricula VARCHAR(20) UNIQUE)',
               []
             );
           }

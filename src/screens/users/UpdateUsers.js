@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -10,36 +10,76 @@ import {
 import MyText from "../../components/MyText";
 import MyInputText from "../../components/MyInputText";
 import MySingleButton from "../../components/MySingleButton";
-import MyDropDownPicker from "../../components/MyDropDownPicker";
+import MyDropDownVehicles from "../../components/MyDropDownVehicles";
 
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
 const UpdateUser = () => {
-  const [ciSearch, setCiSearch] = useState('');
+  const [idSearch, setIdSearch] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [ci, setCi] = useState('');
-  const [matricula, setMatricula] = useState('');
+  const [vehicles, setVehicles] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selected, setSelected] = useState(undefined);
+
+  useEffect(() => {
+    console.log("##### Buscar vehiculos y usuarios #####");
+    getVehicles();
+    getUsers();
+  }, []);
+
+  const getVehicles = () => {
+    db.transaction((tx) => {
+      tx.executeSql(`SELECT vehicle_id, matricula FROM vehicles`, [], (tx, results) => {
+        console.log("results", results);
+        if (results.rows.length > 0) {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setVehicles(temp);
+        } else {
+          Alert.alert(
+            "Mensaje",
+            "No hay vehiculos!!!",
+          );
+        }
+      });
+    });
+  };
+
+  const getUsers = () => {
+    db.transaction((tx) => {
+      tx.executeSql(`SELECT ci, matricula FROM users`, [], (tx, results) => {
+        console.log("results", results);
+        if (results.rows.length > 0) {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setUsers(temp);
+        }
+      });
+    });
+  };
 
   const searchUser = () => {
     console.log("searchUser");
 
-    if (!ciSearch.trim()) {
-      Alert.alert("La cédula del Usuario es requerida");
+    if (!idSearch.trim()) {
+      Alert.alert("El ID es requerido");
       return;
     }
 
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM users WHERE ci = ?",
-        [ciSearch],
+        "SELECT * FROM users WHERE user_id = ?",
+        [idSearch],
         (tx, results) => {
           if (results.rows.length > 0) {
             setNombre(results.rows.item(0).nombre);
             setApellido(results.rows.item(0).apellido);
             setCi(results.rows.item(0).ci);
-            setMatricula(results.rows.item(0).matricula);
           } else {
             Alert.alert("Usuario no encontrado");
           }
@@ -52,31 +92,46 @@ const UpdateUser = () => {
     console.log("updateUser");
 
     if (!nombre.trim()) {
-        Alert.alert("El nombre del Usuario no puede estar vacio");
-        return;
-      }
-
-      if (!apellido.trim()) {
-        Alert.alert("El apellido del Usuario no puede estar vacio");
-        return;
-      }
-
+      Alert.alert("El nombre del Usuario no puede estar vacio");
+      return;
+    }
+    if (nombre.length > 20) {
+      Alert.alert("El nombre solo puede tener 20 caracteres");
+      return;
+    }
+    if (!apellido.trim()) {
+      Alert.alert("El apellido del Usuario no puede estar vacio");
+      return;
+    }
+    if (apellido.length > 20) {
+      Alert.alert("El apellido solo puede tener 20 caracteres");
+      return;
+    }
     if (!ci.trim()) {
       Alert.alert("La cédula del Usuario no puede estar vacia");
       return;
     }
-
-    if (!matricula.trim()) {
-      Alert.alert("La matricula no puede estar vacia");
+    if (ci.length != 8) {
+      Alert.alert("La cédula debe tener 8 caracteres");
       return;
     }
-
+    if (ci < 10000000 || ci > 100000000) {
+      Alert.alert("La cédula debe empezar por un numero mayor al 0");
+      return;
+    }
+    
+    for (let i in users) {
+      if (users[i].matricula == selected || users[i].ci == ci) {
+        Alert.alert("La matricula o la cédula ya estan asociadas a un usuario");
+        return true;
+      }
+    }
     db.transaction((tx) => {
       tx.executeSql(
-        "UPDATE users SET nombre = ?, apellido = ?, ci = ?, matricula = ? WHERE ci = ?",
-        [nombre, apellido, ci, matricula, ci],
+        "UPDATE users SET nombre = ?, apellido = ?, ci = ?, matricula = ? WHERE user_id = ?",
+        [nombre, apellido, ci, selected, idSearch],
         (tx, results) => {
-          if (results.rows.length > 0) {
+          if (results.rowsAffected > 0) {
             Alert.alert("Usuario actualizado");
           } else {
             Alert.alert("No se pudo actualizar el usuario");
@@ -84,6 +139,7 @@ const UpdateUser = () => {
         }
       );
     });
+    return false;
   };
 
   return (
@@ -95,11 +151,11 @@ const UpdateUser = () => {
               behavior="padding"
               style={styles.keyboardView}
             >
-              <MyText text="Buscar Usuario" style={styles.text}/>
+              <MyText text="Buscar Usuario" style={styles.text} />
               <MyInputText
-                placeholder="Ingrese la cedula del Usuario"
+                placeholder="Ingrese el ID del Usuario"
                 style={styles.inputStyle}
-                onChangeText={(text) => setCiSearch(text)}
+                onChangeText={(text) => setIdSearch(text)}
               />
               <MySingleButton title="Buscar" customPress={searchUser} />
 
@@ -114,16 +170,19 @@ const UpdateUser = () => {
                 onChangeText={(text) => setApellido(text)}
               />
               <MyInputText
-                placeholder="Ingrese la cedula del Usuario"
+                placeholder="Cédula de Usuario(sin guiones ni puntos)"
                 value={ci}
                 onChangeText={(text) => setCi(text)}
               />
-              {/* Quisimos poner un DropDownPicker para mostrar todas las matriculas seleccionables pero no pudimos, pensamos arreglarlo para la proxima entrega */}
-              <MyInputText
+              <MyDropDownVehicles
                 placeholder="Ingrese la matricula"
-                value={matricula}
-                onChangeText={(text) => setMatricula(text)}
+                contentContainerStyle={{ paddingHorizontal: 20 }}
+                data={vehicles}
+                selected={setSelected}
+                keyExtractor={(index) => index.toString()}
+                renderItem={({ item }) => MyDropDownVehicles(item)}
               />
+              <MyText text="Seleccionar matricula de Vehiculo" style={styles.textMat} />
 
               <MySingleButton title="Actualizar" customPress={updateUser} />
             </KeyboardAvoidingView>
@@ -158,5 +217,9 @@ const styles = StyleSheet.create({
   keyboardView: {
     flex: 1,
     justifyContent: "space-between",
+  },
+  textMat: {
+    padding: 15,
+    textAlign: "center",
   },
 });

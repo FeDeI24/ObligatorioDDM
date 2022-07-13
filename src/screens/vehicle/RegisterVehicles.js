@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
     View,
@@ -18,12 +18,32 @@ const RegisterVehicle = ({ navigation }) => {
     const [marca, setMarca] = useState('');
     const [color, setColor] = useState('');
     const [serialMotor, setSerialMotor] = useState('');
+    const [vehicles, setVehicles] = useState([]);
 
     const clearData = () => {
         setMatricula("");
         setMarca("");
         setColor("");
         setSerialMotor("");
+    };
+
+    useEffect(() => {
+        console.log("##### Buscar vehiculos #####");
+        getVehicles();
+    }, []);
+
+    const getVehicles = () => {
+        db.transaction((tx) => {
+            tx.executeSql(`SELECT matricula FROM vehicles`, [], (tx, results) => {
+                console.log("results", results);
+                if (results.rows.length > 0) {
+                    var temp = [];
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push(results.rows.item(i));
+                    setVehicles(temp);
+                }
+            });
+        });
     };
 
     const registerVehicle = () => {
@@ -33,19 +53,41 @@ const RegisterVehicle = ({ navigation }) => {
             Alert.alert("Ingrese la matricula del vehiculo");
             return;
         }
+        if (matricula.length > 7) {
+            Alert.alert("La matricula solo puede tener 7 caracteres");
+            return;
+        }
         if (!marca.trim()) {
             Alert.alert("Ingrese la marca del vehiculo");
+            return;
+        }
+        if (marca.length > 20) {
+            Alert.alert("La marca solo puede tener 20 caracteres");
             return;
         }
         if (!color.trim()) {
             Alert.alert("Ingrese el color del vehiculo");
             return;
         }
+        if (color.length > 20) {
+            Alert.alert("El color solo puede tener 20 caracteres");
+            return;
+        }
         if (!serialMotor.trim()) {
             Alert.alert("Ingrese el serial del motor del vehiculo");
             return;
         }
+        if (serialMotor.length > 20) {
+            Alert.alert("El serial del motor solo puede tener 20 caracteres");
+            return;
+        }
 
+        for (let i in vehicles) {
+            if (vehicles[i].matricula == matricula) {
+                Alert.alert("La matricula ya esta asociada a un vehiculo");
+                return true;
+            }
+        }
         db.transaction((tx) => {
             tx.executeSql(
                 `INSERT INTO vehicles (matricula, marca, color, serialMotor) VALUES (?, ?, ?, ?)`,
@@ -71,6 +113,7 @@ const RegisterVehicle = ({ navigation }) => {
                 }
             );
         });
+        return false;
     };
 
     return (

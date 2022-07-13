@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,10 +8,9 @@ import {
   Alert,
 } from "react-native";
 import MyInputText from "../../components/MyInputText";
+import MyText from "../../components/MyText";
 import MySingleButton from "../../components/MySingleButton";
-import MyDropDownPicker from "../../components/MyDropDownPicker";
-const DropDownPicker = MyDropDownPicker;
-
+import MyDropDownVehicles from "../../components/MyDropDownVehicles";
 
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
@@ -20,43 +19,103 @@ const RegisterUser = ({ navigation }) => {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [ci, setCi] = useState('');
-  const [matricula, setMatricula] = useState('');
+  const [vehicles, setVehicles] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [selected, setSelected] = useState(undefined);
 
   const clearData = () => {
     setCi("");
     setApellido("");
     setNombre("");
-    setMatricula("");
+    setSelected("");
+  };
+
+  useEffect(() => {
+    console.log("##### Buscar vehiculos y usuarios #####");
+    getVehicles();
+    getUsers();
+  }, []);
+
+  const getVehicles = () => {
+    db.transaction((tx) => {
+      tx.executeSql(`SELECT vehicle_id, matricula FROM vehicles`, [], (tx, results) => {
+        console.log("results", results);
+        if (results.rows.length > 0) {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setVehicles(temp);
+        } else {
+          Alert.alert(
+            "Mensaje",
+            "No hay vehiculos!!!",
+          );
+        }
+      });
+    });
+  };
+
+  const getUsers = () => {
+    db.transaction((tx) => {
+      tx.executeSql(`SELECT ci, matricula FROM users`, [], (tx, results) => {
+        console.log("results", results);
+        if (results.rows.length > 0) {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i)
+            temp.push(results.rows.item(i));
+          setUsers(temp);
+        }
+      });
+    });
   };
 
   const registerUser = () => {
-    console.log("states", nombre, apellido, ci, matricula);
+    console.log("states", nombre, apellido, ci, selected);
     debugger;
     if (!nombre.trim()) {
       Alert.alert("Ingrese su nombre de usuario");
+      return;
+    }
+    if (nombre.length > 20) {
+      Alert.alert("El nombre solo puede tener 20 caracteres");
       return;
     }
     if (!apellido.trim()) {
       Alert.alert("Ingrese su apellido");
       return;
     }
+    if (apellido.length > 20) {
+      Alert.alert("El apellido solo puede tener 20 caracteres");
+      return;
+    }
     if (!ci.trim()) {
       Alert.alert("Ingrese su cedula");
       return;
     }
-    if (!matricula.trim()) {
-      Alert.alert("Ingrese la matricula del vehiculo");
+    if (ci.length != 8) {
+      Alert.alert("La cédula debe tener 8 caracteres");
+      return;
+    }
+    if (ci < 10000000 || ci > 100000000) {
+      Alert.alert("La cédula debe empezar por un numero mayor al 0");
       return;
     }
 
+    for (let i in users) {
+      if (users[i].matricula == selected || users[i].ci == ci) {
+        Alert.alert("La matricula o la cédula ya estan asociadas a un usuario");
+        return true;
+      }
+    }
     db.transaction((tx) => {
       tx.executeSql(
         `INSERT INTO users (nombre, apellido, ci, matricula) VALUES (?, ?, ?, ?)`,
-        [nombre, apellido, ci, matricula],
+        [nombre, apellido, ci, selected],
         (tx, results) => {
           console.log("results", results);
           if (results.rowsAffected > 0) {
             clearData();
+            getVehicles();
             Alert.alert(
               "Exito",
               "Usuario registrado con éxito",
@@ -74,7 +133,9 @@ const RegisterUser = ({ navigation }) => {
         }
       );
     });
-  };
+    return false;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.viewContainer}>
@@ -96,19 +157,21 @@ const RegisterUser = ({ navigation }) => {
               />
 
               <MyInputText
-                placeholder="Cédula de Usuario"
+                placeholder="Cédula de Usuario(sin guiones ni puntos)"
                 onChangeText={setCi}
                 style={styles.ciInput}
                 value={ci}
               />
-              {/* Quisimos poner un DropDownPicker para mostrar todas las matriculas seleccionables pero no pudimos, pensamos arreglarlo para la proxima entrega */}
-              <MyInputText
-                placeholder="Matricula de vehiculo"
-                onChangeText={setMatricula}
-                style={styles.matriculaInput}
-                value={matricula}
+
+              <MyDropDownVehicles
+                contentContainerStyle={{ paddingHorizontal: 20 }}
+                data={vehicles}
+                selected={setSelected}
+                keyExtractor={(index) => index.toString()}
+                renderItem={({ item }) => MyDropDownVehicles(item)}
               />
-              
+              <MyText text="Seleccionar matricula de Vehiculo" style={styles.text} />
+
               <MySingleButton
                 title="Guardar Usuario"
                 customPress={registerUser}
@@ -146,12 +209,12 @@ const styles = StyleSheet.create({
     padding: 15,
     textAlignVertical: "top",
   },
-  matriculaInput: {
-    padding: 15,
-    textAlignVertical: "top",
-  },
   ciInput: {
     padding: 15,
     textAlignVertical: "top",
+  },
+  text: {
+    padding: 15,
+    textAlign: "center",
   },
 });

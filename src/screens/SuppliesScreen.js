@@ -5,19 +5,19 @@ import MyButton from "../components/MyButton";
 import DatabaseConnection from "../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
-const VehiclesScreen = ({ navigation }) => {
+const SuppliesScreen = ({ navigation }) => {
 
   useEffect(() => {
     db.transaction( (txn) => {
       txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='vehicles'",
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='supplies'",
         [],
          (tx, res) =>{
           console.log('item:', res.rows.length);
           if (res.rows.length == 0) {
-            txn.executeSql('DROP TABLE IF EXISTS vehicles', []);
+            txn.executeSql('DROP TABLE IF EXISTS supplies', []);
             txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS vehicles(vehicle_id INTEGER PRIMARY KEY AUTOINCREMENT, matricula VARCHAR(7), marca VARCHAR(20), color VARCHAR(20), serialMotor VARCHAR(20))',
+              'CREATE TABLE IF NOT EXISTS supplies(supply_id INTEGER PRIMARY KEY AUTOINCREMENT, nombre VARCHAR(20), cantidad VARCHAR(20))',
               []
             );
           }
@@ -28,7 +28,7 @@ const VehiclesScreen = ({ navigation }) => {
 
   const removeElementsOnDatabase = () => {
     db.transaction( (txn) => {
-      txn.executeSql('DELETE FROM vehicles', []);
+      txn.executeSql('DELETE FROM supplies', []);
     });
   }
   return (
@@ -38,38 +38,38 @@ const VehiclesScreen = ({ navigation }) => {
           <View style={styles.generalView}>
             <ScrollView>
               <MyButton
-                title="Registro de Vehiculos"
+                title="Registro de insumos"
                 btnColor="black"
                 btnIcon="user-plus"
-                customPress={() => navigation.navigate("RegisterVehicles")}
+                customPress={() => navigation.navigate("RegisterSupplies")}
               />
 
               <MyButton
-                title="Actualizar Vehiculo"
+                title="Actualizar insumos"
                 btnColor="black"
                 btnIcon="user-circle"
-                customPress={() => navigation.navigate("UpdateVehicles")}
+                customPress={() => navigation.navigate("UpdateSupplies")}
               />
 
               <MyButton
-                title="Ver Vehiculo"
+                title="Ver insumo"
                 btnColor="black"
                 btnIcon="users"
-                customPress={() => navigation.navigate("ViewVehicle")}
+                customPress={() => navigation.navigate("ViewSupply")}
               />
 
               <MyButton
-                title="Borrar Vehiculo"
+                title="Borrar insumo"
                 btnColor="black"
                 btnIcon="user-times"
-                customPress={() => navigation.navigate("DeleteVehicles")}
+                customPress={() => navigation.navigate("DeleteSupplies")}
               />
 
               <MyButton
-                title="Ver todos los Vehiculos"
+                title="Ver todos los insumos"
                 btnColor="black"
                 btnIcon="user-times"
-                customPress={() => navigation.navigate("ViewAllVehicles")}
+                customPress={() => navigation.navigate("ViewAllSupplies")}
               />
               <MyButton
                 title="Borrar DB"
@@ -85,7 +85,7 @@ const VehiclesScreen = ({ navigation }) => {
   );
 };
 
-export default VehiclesScreen;
+export default SuppliesScreen;
 
 const styles = StyleSheet.create({
   container: {

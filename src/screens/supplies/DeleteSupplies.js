@@ -14,21 +14,21 @@ import MyText from "../../components/MyText";
 import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
-const DeleteVehicle = ({ navigation }) => {
-    const [id, setId] = useState("");
+const DeleteSupply = ({ navigation }) => {
+    const [id, setId] = useState('');
 
-    const deleteVehicle = ({ navigation }) => {
-        console.log("deleteVehicle");
+    const deleteSupply = ({ navigation }) => {
+        console.log("deleteSupply");
         db.transaction((tx) => {
             tx.executeSql(
-                `DELETE FROM vehicles WHERE vehicle_id = ?`,
+                `DELETE FROM supplies WHERE supply_id = ?`,
                 [id],
                 (tx, results) => {
                     console.log("results", results);
                     if (results.rowsAffected > 0) {
-                        Alert.alert("Vehiculo eliminado");
+                        Alert.alert("Insumo eliminado");
                     } else {
-                        Alert.alert("El vehiculo no existe");
+                        Alert.alert("El insumo no existe");
                     }
                 }
             );
@@ -39,13 +39,13 @@ const DeleteVehicle = ({ navigation }) => {
             <View style={styles.viewContainer}>
                 <View style={styles.generalView}>
                     <ScrollView>
-                        <MyText text="Busqueda de vehiculo" style={styles.text} />
+                        <MyText text="Busqueda de insumos" style={styles.text} />
                         <KeyboardAvoidingView style={styles.keyboardView}>
                             <MyInputText
-                                placeholder="ID de Vehiculo"
+                                placeholder="ID de insumo"
                                 onChangeText={(text) => setId(text)}
                             />
-                            <MySingleButton title="Borrar Vehiculo" customPress={deleteVehicle} />
+                            <MySingleButton title="Borrar insumo" customPress={deleteSupply} />
                         </KeyboardAvoidingView>
                     </ScrollView>
                 </View>
@@ -54,7 +54,7 @@ const DeleteVehicle = ({ navigation }) => {
     );
 };
 
-export default DeleteVehicle;
+export default DeleteSupply;
 
 const styles = StyleSheet.create({
     container: {

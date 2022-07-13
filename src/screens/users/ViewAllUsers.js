@@ -37,6 +37,9 @@ const ViewAllUsers = ({navigation}) => {
   const listItemView = (item) => {
     return (
       <View key={item.id} style={styles.listItemView}>
+        <MyText text="ID de Usuario" style={styles.text}/>
+        <MyText text={item.user_id} style={styles.text}/>
+
         <MyText text="Nombre de Usuario" style={styles.text}/>
         <MyText text={item.nombre} style={styles.text}/>
 

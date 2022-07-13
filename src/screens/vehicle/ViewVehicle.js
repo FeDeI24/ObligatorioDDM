@@ -15,22 +15,22 @@ import DatabaseConnection from "../../database/database-connection";
 const db = DatabaseConnection.getConnection();
 
 const ViewVehicle = ({ navigation }) => {
-  const [matricula, setMatricula] = useState("");
+  const [id, setId] = useState("");
   const [vehicleData, setVehicleData] = useState(null);
 
   const getVehicleData = () => {
     console.log("getVehicleData");
     setVehicleData({});
 
-    if (!matricula.trim()) {
-      Alert.alert("La matricula es requerida");
+    if (!id.trim()) {
+      Alert.alert("El ID es requerido");
       return;
     }
 
     db.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM vehicles WHERE matricula = ?`,
-        [matricula],
+        `SELECT * FROM vehicles WHERE vehicle_id = ?`,
+        [id],
         (tx, results) => {
           console.log("results", results);
           if (results.rows.length > 0) {
@@ -52,11 +52,14 @@ const ViewVehicle = ({ navigation }) => {
               <MyText text="Filtro de Vehiculo" style={styles.text}/>
               <MyInputText
                 style={styles.inputStyle}
-                placeholder="Matricula del Vehículo"
-                onChangeText={(text) => setMatricula(text)}
+                placeholder="ID del Vehículo"
+                onChangeText={(text) => setId(text)}
               />
               <MySingleButton title="Buscar" customPress={getVehicleData} />
               
+              <View style={styles.presenterView}>
+                <MyText text={`Matricula: ${!vehicleData ? '' : vehicleData.matricula}`} style={styles.presenterText}/>
+              </View>
               <View style={styles.presenterView}>
                 <MyText text={`Marca: ${!vehicleData ? '' : vehicleData.marca}`} style={styles.presenterText}/>
               </View>
